@@ -1,5 +1,5 @@
 import Container from "@/components/Container";
-import { useEffect, useRef, Suspense, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "@/styles/Home.module.css";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +11,6 @@ import {
   MonitorSmartphone,
 } from "lucide-react";
 import { TriangleDownIcon } from "@radix-ui/react-icons";
-import Spline from "@splinetool/react-spline";
 import Link from "next/link";
 import { cn, scrollTo } from "@/lib/utils";
 import Image from "next/image";
@@ -24,7 +23,6 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import VanillaTilt from "vanilla-tilt";
 import { motion } from "framer-motion";
 
 const aboutStats = [
@@ -62,7 +60,6 @@ const projects = [
     title: "This website",
     description: "My personal website",
     image: "/assets/portfolio.webm",
-    href: "https://github.com/wendoj/portfolio",
     href: "https://github.com/justifydev/portfolio",
   },
 ];
@@ -100,6 +97,61 @@ const services = [
   },
 ];
 
+// Animated background component
+function AnimatedBackground() {
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0">
+        {/* Floating orbs */}
+        <motion.div
+          className="absolute top-1/4 left-1/4 h-32 w-32 rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 blur-xl"
+          animate={{
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute top-3/4 right-1/4 h-24 w-24 rounded-full bg-gradient-to-r from-secondary/30 to-primary/30 blur-xl"
+          animate={{
+            x: [0, -80, 0],
+            y: [0, 60, 0],
+            scale: [1, 0.8, 1],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1,
+          }}
+        />
+        <motion.div
+          className="absolute top-1/2 right-1/3 h-20 w-20 rounded-full bg-gradient-to-r from-primary/25 to-secondary/25 blur-xl"
+          animate={{
+            x: [0, 60, 0],
+            y: [0, -80, 0],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 7,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2,
+          }}
+        />
+      </div>
+      
+      {/* Grid pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
+    </div>
+  );
+}
+
 export default function Home() {
   const refScrollContainer = useRef(null);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
@@ -111,14 +163,6 @@ export default function Home() {
   useEffect(() => {
     const sections = document.querySelectorAll("section");
     const navLinks = document.querySelectorAll(".nav-link");
-
-    async function getLocomotive() {
-      const Locomotive = (await import("locomotive-scroll")).default;
-      new Locomotive({
-        el: refScrollContainer.current ?? new HTMLElement(),
-        smooth: true,
-      });
-    }
 
     function handleScroll() {
       let current = "";
@@ -136,12 +180,10 @@ export default function Home() {
 
         if (li.getAttribute("href") === `#${current}`) {
           li.classList.add("nav-active");
-          console.log(li.getAttribute("href"));
         }
       });
     }
 
-    void getLocomotive();
     window.addEventListener("scroll", handleScroll);
 
     return () => {
@@ -160,19 +202,6 @@ export default function Home() {
     });
   }, [carouselApi]);
 
-  // card hover effect
-  useEffect(() => {
-    const tilt: HTMLElement[] = Array.from(document.querySelectorAll("#tilt"));
-    VanillaTilt.init(tilt, {
-      speed: 300,
-      glare: true,
-      "max-glare": 0.1,
-      gyroscope: true,
-      perspective: 900,
-      scale: 0.9,
-    });
-  }, []);
-
   return (
     <Container>
       <div ref={refScrollContainer}>
@@ -181,52 +210,44 @@ export default function Home() {
         {/* Intro */}
         <section
           id="home"
-          data-scroll-section
-          className="mt-40 flex w-full flex-col items-center xl:mt-0 xl:min-h-screen xl:flex-row xl:justify-between"
+          className="relative mt-40 flex w-full flex-col items-center xl:mt-0 xl:min-h-screen xl:flex-row xl:justify-between"
         >
           <div className={styles.intro}>
-            <div
-              data-scroll
-              data-scroll-direction="horizontal"
-              data-scroll-speed=".09"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
               className="flex flex-row items-center space-x-1.5"
             >
               <span className={styles.pill}>next.js</span>
               <span className={styles.pill}>tailwindcss</span>
               <span className={styles.pill}>typescript</span>
-            </div>
-            <div>
-              <h1
-                data-scroll
-                data-scroll-enable-touch-speed
-                data-scroll-speed=".06"
-                data-scroll-direction="horizontal"
-              >
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <h1>
                 <span className="text-6xl tracking-tighter text-foreground 2xl:text-8xl">
                   Hello, I&apos;m
                   <br />
                 </span>
                 <span className="clash-grotesk text-gradient text-6xl 2xl:text-8xl">
-                  JustifyDev.
+                  justify.
                 </span>
               </h1>
-              <p
-                data-scroll
-                data-scroll-enable-touch-speed
-                data-scroll-speed=".06"
-                className="mt-1 max-w-lg tracking-tight text-muted-foreground 2xl:text-xl"
-              >
+              <p className="mt-1 max-w-lg tracking-tight text-muted-foreground 2xl:text-xl">
                 An experienced full-stack website developer with a passion for
                 crafting unique digital experiences.
               </p>
-            </div>
-            <span
-              data-scroll
-              data-scroll-enable-touch-speed
-              data-scroll-speed=".06"
+            </motion.div>
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-row items-center space-x-1.5 pt-6"
             >
-              <Link href="mailto:wendoj@proton.me" passHref>
               <Link href="mailto:justifydev@proton.me" passHref>
                 <Button>
                   Get in touch <ChevronRight className="ml-1 h-4 w-4" />
@@ -238,7 +259,7 @@ export default function Home() {
               >
                 Learn more
               </Button>
-            </span>
+            </motion.span>
 
             <div
               className={cn(
@@ -250,27 +271,70 @@ export default function Home() {
               <TriangleDownIcon className="mt-1 animate-bounce" />
             </div>
           </div>
-          <div
-            data-scroll
-            data-scroll-speed="-.01"
-            id={styles["canvas-container"]}
-            className="mt-14 h-full w-full xl:mt-0"
+          
+          {/* Animated Hero Section */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="relative mt-14 h-[515px] w-full xl:mt-0 xl:w-[690px] xl:min-w-[690px]"
           >
-            <Suspense fallback={<span>Loading...</span>}>
-              <Spline scene="/assets/scene.splinecode" />
-            </Suspense>
-          </div>
+            <div className="relative h-full w-full overflow-hidden rounded-3xl border bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+              <AnimatedBackground />
+              
+              {/* Code blocks floating animation */}
+              <div className="relative z-10 flex h-full items-center justify-center p-8">
+                <div className="space-y-4">
+                  <motion.div
+                    className="rounded-lg bg-card/50 p-4 backdrop-blur-sm"
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <code className="text-sm text-primary">
+                      const developer = &#123;<br />
+                      &nbsp;&nbsp;name: &quot;JustifyDev&quot;,<br />
+                      &nbsp;&nbsp;skills: [&quot;React&quot;, &quot;Next.js&quot;, &quot;TypeScript&quot;]<br />
+                      &#125;
+                    </code>
+                  </motion.div>
+                  
+                  <motion.div
+                    className="ml-8 rounded-lg bg-card/50 p-4 backdrop-blur-sm"
+                    animate={{ y: [0, 10, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                  >
+                    <code className="text-sm text-secondary">
+                      function buildAmazingApps() &#123;<br />
+                      &nbsp;&nbsp;return &quot;✨ Magic happens here&quot;;<br />
+                      &#125;
+                    </code>
+                  </motion.div>
+                  
+                  <motion.div
+                    className="rounded-lg bg-card/50 p-4 backdrop-blur-sm"
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                  >
+                    <code className="text-sm text-muted-foreground">
+                      // Always learning, always growing 🚀
+                    </code>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </section>
 
         {/* About */}
-        <section id="about" data-scroll-section>
-          <div
-            data-scroll
-            data-scroll-speed=".4"
-            data-scroll-position="top"
+        <section id="about">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
             className="my-14 flex max-w-6xl flex-col justify-start space-y-10"
           >
-            <h2 className="py-16  pb-2 text-3xl font-light leading-normal tracking-tighter text-foreground xl:text-[40px]">
+            <h2 className="py-16 pb-2 text-3xl font-light leading-normal tracking-tighter text-foreground xl:text-[40px]">
               I&apos;m an experienced full-stack developer proficient in{" "}
               <Link
                 href="https://create.t3.gg/"
@@ -286,9 +350,13 @@ export default function Home() {
               efficiently collaborating with cross-functional teams.
             </h2>
             <div className="grid grid-cols-2 gap-8 xl:grid-cols-3">
-              {aboutStats.map((stat) => (
-                <div
+              {aboutStats.map((stat, index) => (
+                <motion.div
                   key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
                   className="flex flex-col items-center text-center xl:items-start xl:text-start"
                 >
                   <span className="clash-grotesk text-gradient text-4xl font-semibold tracking-tight xl:text-6xl">
@@ -297,14 +365,14 @@ export default function Home() {
                   <span className="tracking-tight text-muted-foreground xl:text-lg">
                     {stat.label}
                   </span>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </section>
 
         {/* Projects */}
-        <section id="projects" data-scroll-section>
+        <section id="projects">
           {/* Gradient */}
           <div className="relative isolate -z-10">
             <div
@@ -320,7 +388,13 @@ export default function Home() {
               />
             </div>
           </div>
-          <div data-scroll data-scroll-speed=".4" className="my-64">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="my-64"
+          >
             <span className="text-gradient clash-grotesk text-sm font-semibold tracking-tighter">
               ✨ Projects
             </span>
@@ -336,37 +410,44 @@ export default function Home() {
             <div className="mt-14">
               <Carousel setApi={setCarouselApi} className="w-full">
                 <CarouselContent>
-                  {projects.map((project) => (
+                  {projects.map((project, index) => (
                     <CarouselItem key={project.title} className="md:basis-1/2">
-                      <Card id="tilt">
-                        <CardHeader className="p-0">
-                          <Link href={project.href} target="_blank" passHref>
-                            {project.image.endsWith(".webm") ? (
-                              <video
-                                src={project.image}
-                                autoPlay
-                                loop
-                                muted
-                                className="aspect-video h-full w-full rounded-t-md bg-primary object-cover"
-                              />
-                            ) : (
-                              <Image
-                                src={project.image}
-                                alt={project.title}
-                                width={600}
-                                height={300}
-                                quality={100}
-                                className="aspect-video h-full w-full rounded-t-md bg-primary object-cover"
-                              />
-                            )}
-                          </Link>
-                        </CardHeader>
-                        <CardContent className="absolute bottom-0 w-full bg-background/50 backdrop-blur">
-                          <CardTitle className="border-t border-white/5 p-4 text-base font-normal tracking-tighter">
-                            {project.description}
-                          </CardTitle>
-                        </CardContent>
-                      </Card>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: index * 0.1 }}
+                        viewport={{ once: true }}
+                      >
+                        <Card className="group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+                          <CardHeader className="p-0">
+                            <Link href={project.href} target="_blank" passHref>
+                              {project.image.endsWith(".webm") ? (
+                                <video
+                                  src={project.image}
+                                  autoPlay
+                                  loop
+                                  muted
+                                  className="aspect-video h-full w-full rounded-t-md bg-primary object-cover transition-transform duration-300 group-hover:scale-105"
+                                />
+                              ) : (
+                                <Image
+                                  src={project.image}
+                                  alt={project.title}
+                                  width={600}
+                                  height={300}
+                                  quality={100}
+                                  className="aspect-video h-full w-full rounded-t-md bg-primary object-cover transition-transform duration-300 group-hover:scale-105"
+                                />
+                              )}
+                            </Link>
+                          </CardHeader>
+                          <CardContent className="absolute bottom-0 w-full bg-background/50 backdrop-blur">
+                            <CardTitle className="border-t border-white/5 p-4 text-base font-normal tracking-tighter">
+                              {project.description}
+                            </CardTitle>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
@@ -380,27 +461,19 @@ export default function Home() {
                 projects
               </div>
             </div>
-          </div>
+          </motion.div>
         </section>
 
         {/* Services */}
-        <section id="services" data-scroll-section>
-          <div
-            data-scroll
-            data-scroll-speed=".4"
-            data-scroll-position="top"
+        <section id="services">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
             className="my-24 flex flex-col justify-start space-y-10"
           >
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{
-                duration: 1,
-                staggerChildren: 0.5,
-              }}
-              viewport={{ once: true }}
-              className="grid items-center gap-1.5 md:grid-cols-2 xl:grid-cols-3"
-            >
+            <div className="grid items-center gap-1.5 md:grid-cols-2 xl:grid-cols-3">
               <div className="flex flex-col py-6 xl:p-6">
                 <h2 className="text-4xl font-medium tracking-tight">
                   Need more info?
@@ -414,9 +487,13 @@ export default function Home() {
                   questions, feel free to reach out.
                 </p>
               </div>
-              {services.map((service) => (
-                <div
+              {services.map((service, index) => (
+                <motion.div
                   key={service.service}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
                   className="flex flex-col items-start rounded-md bg-white/5 p-14 shadow-md backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-md"
                 >
                   <service.icon className="my-6 text-primary" size={20} />
@@ -426,18 +503,19 @@ export default function Home() {
                   <span className="mt-2 tracking-tighter text-muted-foreground">
                     {service.description}
                   </span>
-                </div>
+                </motion.div>
               ))}
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </section>
 
         {/* Contact */}
-        <section id="contact" data-scroll-section className="my-64">
-          <div
-            data-scroll
-            data-scroll-speed=".4"
-            data-scroll-position="top"
+        <section id="contact" className="my-64">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
             className="flex flex-col items-center justify-center rounded-lg bg-gradient-to-br from-primary/[6.5%] to-white/5 px-8 py-16 text-center xl:py-24"
           >
             <h2 className="text-4xl font-medium tracking-tighter xl:text-6xl">
@@ -448,11 +526,10 @@ export default function Home() {
               I&apos;m currently available for freelance work and open to
               discussing new projects.
             </p>
-            <Link href="mailto:wendoj@proton.me" passHref>
             <Link href="mailto:justifydev@proton.me" passHref>
               <Button className="mt-6">Get in touch</Button>
             </Link>
-          </div>
+          </motion.div>
         </section>
       </div>
     </Container>
