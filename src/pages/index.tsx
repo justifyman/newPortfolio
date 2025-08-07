@@ -63,6 +63,7 @@ const projects = [
     description: "My personal website",
     image: "/assets/portfolio.webm",
     href: "https://github.com/wendoj/portfolio",
+    href: "https://github.com/justifydev/portfolio",
   },
 ];
 
@@ -206,7 +207,7 @@ export default function Home() {
                   <br />
                 </span>
                 <span className="clash-grotesk text-gradient text-6xl 2xl:text-8xl">
-                  WendoJ.
+                  JustifyDev.
                 </span>
               </h1>
               <p
@@ -226,6 +227,7 @@ export default function Home() {
               className="flex flex-row items-center space-x-1.5 pt-6"
             >
               <Link href="mailto:wendoj@proton.me" passHref>
+              <Link href="mailto:justifydev@proton.me" passHref>
                 <Button>
                   Get in touch <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
@@ -447,6 +449,7 @@ export default function Home() {
               discussing new projects.
             </p>
             <Link href="mailto:wendoj@proton.me" passHref>
+            <Link href="mailto:justifydev@proton.me" passHref>
               <Button className="mt-6">Get in touch</Button>
             </Link>
           </div>
